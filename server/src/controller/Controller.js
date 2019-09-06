@@ -53,11 +53,8 @@ class Controller {
     }
     const loggedInUser = users[0];
     const loginExpires = moment(loggedInUser.loggedInUntil);
-    if (loginExpires === null) {
-      return null;
-    }
     const now = moment();
-    if (loginExpires.isBefore(now)) {
+    if (!loginExpires.isValid() || loginExpires.isBefore(now)) {
       return null;
     }
     return loggedInUser;
@@ -78,13 +75,25 @@ class Controller {
   /**
    * Returns the message with the specified id.
    *
-   * @param {number} msgId The id of the searched message.
+   * @param {number} id The id of the searched message.
    * @return {MsgDTO} The message with the specified id, or null if there was
    *                  no such message.
    * @throws Throws an exception if failed to search for the specified message.
    */
-  findMsg(msgId) {
-    return this.chatDAO.findMsgById(msgId);
+  findMsg(id) {
+    return this.chatDAO.findMsgById(id);
+  }
+
+  /**
+   * Returns the user with the specified id.
+   *
+   * @param {number} id The id of the searched user.
+   * @return {UserDTO} The user with the specified id, or null if there was
+   *                  no such user.
+   * @throws Throws an exception if failed to search for the specified user.
+   */
+  findUser(id) {
+    return this.chatDAO.findUserById(id);
   }
 
   /**

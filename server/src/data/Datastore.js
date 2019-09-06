@@ -21,4 +21,4 @@ class Datastore {
   }
 }
 
-module.exports = Datastore;
+module.exports = new Datastore();

@@ -19,6 +19,13 @@ class RequestHandler {
   }
 
   /**
+   * Protocol part (http) of a URL.
+   */
+  static get URL_PREFIX() {
+    return 'http://';
+  }
+
+  /**
    * Sends an http response with the specified http status and body.
    * @param {Request} res The express Response object.
    * @param {number} status The status code of the response.

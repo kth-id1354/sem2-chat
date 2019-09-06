@@ -3,7 +3,6 @@
 const WError = require('verror').WError;
 const UserDTO = require('../model/UserDTO');
 const MsgDTO = require('../model/MsgDTO');
-const Datastore = require('../data/Datastore');
 
 /**
  * This class is responsible for all calls to the database. There shall not
@@ -15,8 +14,10 @@ class ChatDAO {
    * Creates a new instance and initializes the in-memory datastore.
    */
   constructor() {
-    this.datastore = new Datastore();
-    this.createDefaultUsers();
+    this.datastore = require('../data/Datastore');
+    if (this.datastore.users.length === 0) {
+      this.createDefaultUsers();
+    }
   }
 
   /**
@@ -30,11 +31,11 @@ class ChatDAO {
    */
   findUserByUsername(username) {
     const foundUsers = [];
-    for (const user of this.datastore.users) {
+    this.datastore.users.forEach((user) => {
       if (user.username === username) {
-        foundUsers.push(user);
+        foundUsers.push(Object.assign({}, user));
       }
-    }
+    });
     return foundUsers;
   }
 
@@ -46,12 +47,8 @@ class ChatDAO {
    *                 or null if no matching user was found.
    */
   findUserById(id) {
-    for (const user of this.datastore.users) {
-      if (user.id === id) {
-        return user;
-      }
-    }
-    return null;
+    const foundUser = this.getUserInDbById(id);
+    return Object.assign({}, foundUser);
   }
 
   /**
@@ -62,7 +59,7 @@ class ChatDAO {
    * @throws Throws an exception if failed to update the user.
    */
   updateUser(user) {
-    const foundUser = this.findUserById(user.id);
+    const foundUser = this.getUserInDbById(user.id);
     if (foundUser === null) {
       throw new WError(
           {
@@ -97,7 +94,7 @@ class ChatDAO {
         null
     );
     this.datastore.msgs.push(newMsg);
-    return newMsg;
+    return Object.assign({}, newMsg);
   }
 
   /**
@@ -108,12 +105,8 @@ class ChatDAO {
    *                  no such message.
    */
   findMsgById(id) {
-    for (const msg of this.datastore.msgs) {
-      if (msg.id === id) {
-        return msg;
-      }
-    }
-    return null;
+    const foundMsg = this.getMsgInDbById(id);
+    return Object.assign({}, foundMsg);
   }
 
   /**
@@ -124,11 +117,11 @@ class ChatDAO {
    */
   findAllNotDeletedMsgs() {
     const notDeletedMsgs = [];
-    for (const msg of this.datastore.msgs) {
+    this.datastore.msgs.forEach((msg) => {
       if (msg.deletedAt === null) {
-        notDeletedMsgs.push(msg);
+        notDeletedMsgs.push(Object.assign({}, msg));
       }
-    }
+    });
     return notDeletedMsgs;
   }
 
@@ -139,7 +132,7 @@ class ChatDAO {
    * @throws Throws an exception if failed to delete the specified message.
    */
   deleteMsg(id) {
-    const foundMsg = this.findMsgById(id);
+    const foundMsg = this.getMsgInDbById(id);
     if (foundMsg === null) {
       throw new WError(
           {
@@ -158,6 +151,30 @@ class ChatDAO {
   createDefaultUsers() {
     this.datastore.users.push(new UserDTO(1, 'stina', null));
     this.datastore.users.push(new UserDTO(2, 'nisse', null));
+  }
+
+  // eslint-disable-next-line require-jsdoc
+  getUserInDbById(id) {
+    let foundUser = null;
+    this.datastore.users.forEach((user) => {
+      if (user.id === id) {
+        foundUser = user;
+        return;
+      }
+    });
+    return foundUser;
+  }
+
+  // eslint-disable-next-line require-jsdoc
+  getMsgInDbById(id) {
+    let foundMsg = null;
+    this.datastore.msgs.forEach((msg) => {
+      if (msg.id === id) {
+        foundMsg = msg;
+        return;
+      }
+    });
+    return foundMsg;
   }
 }
 

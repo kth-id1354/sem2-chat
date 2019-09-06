@@ -2,6 +2,7 @@
 
 const RequestHandler = require('./RequestHandler');
 const Authorization = require('./auth/Authorization');
+const UserApi = require('./UserApi');
 
 /**
  * Defines the REST API with endpoints related to messages.
@@ -47,16 +48,17 @@ class MsgApi extends RequestHandler {
             return;
           }
           const msg = this.contr.addMsg(req.body.msg, req.user);
+          this.convertAuthorIdToUrl(msg);
           this.sendHttpResponse(res, 200, msg);
         } catch (err) {
-          this.sendInternalServerError();
+          this.handleError(err);
         }
       });
 
       /*
        * Deletes the specified message.
        *
-       * parameter msgId The id of the message that shall be deleted.
+       * parameter id The id of the message that shall be deleted.
        * return 204: If the message was deleted.
        *        401: If the user was not authenticated, or was not the author
        *             of the specified message.
@@ -86,7 +88,7 @@ class MsgApi extends RequestHandler {
           this.contr.deleteMsg(parseInt(req.params.id, 10));
           this.sendHttpResponse(res, 204);
         } catch (err) {
-          this.sendInternalServerError();
+          this.handleError(err);
         }
       });
 
@@ -114,9 +116,12 @@ class MsgApi extends RequestHandler {
             this.sendHttpResponse(res, 404, 'No messages');
             return;
           }
+          for (const msg of msgs) {
+            this.convertAuthorIdToUrl(msg);
+          }
           this.sendHttpResponse(res, 200, msgs);
         } catch (err) {
-          this.sendInternalServerError();
+          this.handleError(err);
         }
       });
     } catch (err) {
@@ -129,8 +134,17 @@ class MsgApi extends RequestHandler {
    */
 
   // eslint-disable-next-line require-jsdoc
-  sendInternalServerError() {
+  handleError(err) {
+    console.log(err.stack);
     res.status(500).send({error: 'Operation failed.'});
+  }
+
+  // eslint-disable-next-line require-jsdoc
+  convertAuthorIdToUrl(msg) {
+    msg.author = RequestHandler.URL_PREFIX + process.env.SERVER_HOST +
+                 ':' + process.env.SERVER_PORT + UserApi.USER_API_PATH +
+                 '/' + msg.authorId;
+    delete msg.authorId;
   }
 }
 
