@@ -56,7 +56,7 @@ class Authorization {
   /**
    * Sends a cookie specifiying that the user is logged in.
    * @param {UserDTO} user The logged in user.
-   * @param {Result} res The express request object.
+   * @param {Response} res The express response object.
    */
   static sendAuthCookie(user, res) {
     const notAccessibleFromJs = {httpOnly: true};

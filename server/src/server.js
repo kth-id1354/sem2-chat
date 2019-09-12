@@ -21,6 +21,12 @@ app.get('/', (req, res) => {
 const reqHandlerLoader = require('./api');
 reqHandlerLoader.loadHandlers(app);
 
-const server = app.listen(process.env.SERVER_PORT, process.env.SERVER_HOST, () => {
-  console.log(`Running server on ${server.address().address}:${server.address().port}`);
-});
+const server = app.listen(
+    process.env.SERVER_PORT,
+    process.env.SERVER_HOST,
+    () => {
+      console.log(
+          `Server is up at ${server.address().address}:${server.address().port}`
+      );
+    }
+);

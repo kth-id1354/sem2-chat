@@ -44,7 +44,7 @@ class UserApi extends RequestHandler {
        */
       this.router.post(
           '/login',
-          (req, res, next) => {
+          (req, res) => {
             try {
               const loggedInUser = this.contr.login(req.body.username);
               if (loggedInUser === null) {
@@ -56,8 +56,7 @@ class UserApi extends RequestHandler {
                 return;
               }
             } catch (err) {
-              console.log(err.stack);
-              res.status(500).send({error: 'Operation failed.'});
+              this.handleException(err, res);
             }
           }
       );
@@ -70,7 +69,7 @@ class UserApi extends RequestHandler {
        *        401: If the user was not authenticated.
        *        404: If the specified user did not exist.
        */
-      this.router.get('/:id', (req, res, next) => {
+      this.router.get('/:id', (req, res) => {
         try {
           if (
             !Authorization.checkLogin(
@@ -89,7 +88,7 @@ class UserApi extends RequestHandler {
           }
           this.sendHttpResponse(res, 200, user);
         } catch (err) {
-          this.handleError(err);
+          this.handleException(err, res);
         }
       });
     } catch (err) {

@@ -35,7 +35,7 @@ class MsgApi extends RequestHandler {
        * return 200: The newly created message, if the message was added.
        *        401: If the user was not authenticated.
        */
-      this.router.post('/', (req, res, next) => {
+      this.router.post('/', (req, res) => {
         try {
           if (
             !Authorization.checkLogin(
@@ -51,7 +51,7 @@ class MsgApi extends RequestHandler {
           this.convertAuthorIdToUrl(msg);
           this.sendHttpResponse(res, 200, msg);
         } catch (err) {
-          this.handleError(err);
+          this.handleException(err, res);
         }
       });
 
@@ -64,7 +64,7 @@ class MsgApi extends RequestHandler {
        *             of the specified message.
        *        404: If the specified message did not exist.
        */
-      this.router.delete('/:id', (req, res, next) => {
+      this.router.delete('/:id', (req, res) => {
         try {
           if (
             !Authorization.checkLogin(
@@ -76,19 +76,19 @@ class MsgApi extends RequestHandler {
           ) {
             return;
           }
-          const msg = this.contr.findMsg(parseInt(req.params.id, 10));
-          if (msg === null) {
-            this.sendHttpResponse(res, 404, 'No such message');
-            return;
-          }
-          if (req.user.id !== msg.authorId) {
-            this.sendHttpResponse(res, 401, 'Unauthorised user');
-            return;
-          }
+          // const msg = this.contr.findMsg(parseInt(req.params.id, 10));
+          // if (msg === null) {
+          //   this.sendHttpResponse(res, 404, 'No such message');
+          //   return;
+          // }
+          // if (req.user.id !== msg.authorId) {
+          //   this.sendHttpResponse(res, 401, 'Unauthorised user');
+          //   return;
+          // }
           this.contr.deleteMsg(parseInt(req.params.id, 10));
           this.sendHttpResponse(res, 204);
         } catch (err) {
-          this.handleError(err);
+          this.handleException(err, res);
         }
       });
 
@@ -99,7 +99,7 @@ class MsgApi extends RequestHandler {
        *        401: If the user was not authenticated.
        *        404: If there are no messages at all.
        */
-      this.router.get('/', (req, res, next) => {
+      this.router.get('/', (req, res) => {
         try {
           if (
             !Authorization.checkLogin(
@@ -121,30 +121,12 @@ class MsgApi extends RequestHandler {
           }
           this.sendHttpResponse(res, 200, msgs);
         } catch (err) {
-          this.handleError(err);
+          this.handleException(err, res);
         }
       });
     } catch (err) {
       this.logger.logException(err);
     }
-  }
-
-  /*
-   * Only 'private' helper methods below here.
-   */
-
-  // eslint-disable-next-line require-jsdoc
-  handleError(err) {
-    console.log(err.stack);
-    res.status(500).send({error: 'Operation failed.'});
-  }
-
-  // eslint-disable-next-line require-jsdoc
-  convertAuthorIdToUrl(msg) {
-    msg.author = RequestHandler.URL_PREFIX + process.env.SERVER_HOST +
-                 ':' + process.env.SERVER_PORT + UserApi.USER_API_PATH +
-                 '/' + msg.authorId;
-    delete msg.authorId;
   }
 }
 

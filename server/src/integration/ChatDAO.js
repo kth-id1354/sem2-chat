@@ -138,10 +138,10 @@ class ChatDAO {
           {
             info: {
               ChatDAO: 'Failed to delete message.',
-              msg: msgId,
+              msg: id,
             },
           },
-          `No message with id ${msgId}.`
+          `No message with id ${id}.`
       );
     }
     foundMsg.deletedAt = new Date().toDateString();

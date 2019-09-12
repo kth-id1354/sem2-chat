@@ -44,6 +44,24 @@ class RequestHandler {
     }
     res.status(status).json({[errOrSucc]: body});
   }
+
+  /*
+   * Only 'private' helper methods below here.
+   */
+
+  // eslint-disable-next-line require-jsdoc
+  handleException(err, res) {
+    this.logger.logException(err);
+    this.sendHttpResponse(res, 500, 'Operation failed');
+  }
+
+  // eslint-disable-next-line require-jsdoc
+  convertAuthorIdToUrl(msg) {
+    msg.author = RequestHandler.URL_PREFIX + process.env.SERVER_HOST +
+                 ':' + process.env.SERVER_PORT + UserApi.USER_API_PATH +
+                 '/' + msg.authorId;
+    delete msg.authorId;
+  }
 }
 
 module.exports = RequestHandler;
