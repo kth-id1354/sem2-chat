@@ -1,6 +1,6 @@
 'use strict';
 
-const result = require('dotenv').config();
+const result = require('dotenv-safe').config();
 if (result.error) {
   throw result.error;
 }
