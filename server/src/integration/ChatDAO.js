@@ -48,6 +48,9 @@ class ChatDAO {
    */
   findUserById(id) {
     const foundUser = this.getUserInDbById(id);
+    if (foundUser === null) {
+      return null;
+    }
     return Object.assign({}, foundUser);
   }
 
@@ -106,6 +109,9 @@ class ChatDAO {
    */
   findMsgById(id) {
     const foundMsg = this.getMsgInDbById(id);
+    if (foundMsg === null) {
+      return null;
+    }
     return Object.assign({}, foundMsg);
   }
 

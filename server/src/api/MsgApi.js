@@ -76,15 +76,15 @@ class MsgApi extends RequestHandler {
           ) {
             return;
           }
-          // const msg = this.contr.findMsg(parseInt(req.params.id, 10));
-          // if (msg === null) {
-          //   this.sendHttpResponse(res, 404, 'No such message');
-          //   return;
-          // }
-          // if (req.user.id !== msg.authorId) {
-          //   this.sendHttpResponse(res, 401, 'Unauthorised user');
-          //   return;
-          // }
+          const msg = this.contr.findMsg(parseInt(req.params.id, 10));
+          if (msg === null) {
+            this.sendHttpResponse(res, 404, 'No such message');
+            return;
+          }
+          if (req.user.id !== msg.authorId) {
+            this.sendHttpResponse(res, 401, 'Unauthorised user');
+            return;
+          }
           this.contr.deleteMsg(parseInt(req.params.id, 10));
           this.sendHttpResponse(res, 204);
         } catch (err) {
@@ -127,6 +127,23 @@ class MsgApi extends RequestHandler {
     } catch (err) {
       this.logger.logException(err);
     }
+  }
+
+  /*
+   * Only 'private' helper methods below.
+   */
+
+  // eslint-disable-next-line require-jsdoc
+  convertAuthorIdToUrl(msg) {
+    msg.author =
+      RequestHandler.URL_PREFIX +
+      process.env.SERVER_HOST +
+      ':' +
+      process.env.SERVER_PORT +
+      UserApi.USER_API_PATH +
+      '/' +
+      msg.authorId;
+    delete msg.authorId;
   }
 }
 
