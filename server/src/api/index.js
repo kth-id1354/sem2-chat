@@ -32,7 +32,7 @@ class RequestHandlerLoader {
    */
   loadHandlers(app) {
     this.reqHandlers.forEach((reqHandler) => {
-      reqHandler.registerHandler();
+      reqHandler.registerHandlers();
       app.use(reqHandler.path, reqHandler.router);
     });
   }

@@ -25,7 +25,7 @@ class MsgApi extends RequestHandler {
   /**
    * Registers the request handling functions.
    */
-  registerHandler() {
+  registerHandlers() {
     try {
       /*
        * Adds a new message to the conversation. The author will be set to the

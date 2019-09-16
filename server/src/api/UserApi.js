@@ -31,7 +31,7 @@ class UserApi extends RequestHandler {
   /**
    * Registers the request handling functions.
    */
-  registerHandler() {
+  registerHandlers() {
     try {
       /*
        * Login a user. This is not a real login since no password is required.
