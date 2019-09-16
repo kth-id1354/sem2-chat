@@ -59,7 +59,6 @@ class Authorization {
    * @param {Response} res The express response object.
    */
   static sendAuthCookie(user, res) {
-    const notAccessibleFromJs = {httpOnly: true};
     const isSessionCookie = {expires: 0};
 
     const jwtToken = jwt.sign(
@@ -71,7 +70,6 @@ class Authorization {
     );
 
     const cookieOptions = {
-      ...notAccessibleFromJs,
       ...isSessionCookie,
     };
     res.cookie('chatAuth', jwtToken, cookieOptions);
