@@ -153,6 +153,10 @@ class ChatDAO {
     foundMsg.deletedAt = new Date().toDateString();
   }
 
+  /*
+   * Only 'private' helper methods below.
+   */
+
   // eslint-disable-next-line require-jsdoc
   createDefaultUsers() {
     this.datastore.users.push(new UserDTO(1, 'stina', null));
