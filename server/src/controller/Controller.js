@@ -1,7 +1,5 @@
 'use strict';
 
-const moment = require('moment');
-moment().format();
 const ChatDAO = require('../integration/ChatDAO');
 
 /**
@@ -52,9 +50,12 @@ class Controller {
       return null;
     }
     const loggedInUser = users[0];
-    const loginExpires = moment(loggedInUser.loggedInUntil);
-    const now = moment();
-    if (!loginExpires.isValid() || loginExpires.isBefore(now)) {
+    const loginExpires = new Date(loggedInUser.loggedInUntil);
+    if (!this.isValidDate(loginExpires)) {
+      return null;
+    }
+    const now = new Date();
+    if (loginExpires < now) {
       return null;
     }
     return loggedInUser;
@@ -122,9 +123,15 @@ class Controller {
    */
   // eslint-disable-next-line require-jsdoc
   setUsersStatusToLoggedIn(user) {
-    const periodToStayLoggedIn = moment.duration({hours: 24});
-    user.loggedInUntil = new Date(moment() + periodToStayLoggedIn);
+    const hoursToStayLoggedIn = 24;
+    const now = new Date();
+    user.loggedInUntil = now.setHours(now.getHours() + hoursToStayLoggedIn);
     this.chatDAO.updateUser(user);
+  }
+
+  // eslint-disable-next-line require-jsdoc
+  isValidDate(date) {
+    return !isNaN(date.getTime());
   }
 }
 module.exports = Controller;
