@@ -3,14 +3,20 @@
 const path = require('path');
 const APP_ROOT_DIR = path.join(__dirname, '..');
 
+const dotenvFileIsMissing = (error) => {
+  return (
+    error !== undefined &&
+    error !== null &&
+    error.code === 'ENOENT' &&
+    error.path.includes('.env')
+  );
+};
+
 const result = require('dotenv-safe').config({
   path: path.join(APP_ROOT_DIR, '.env'),
   example: path.join(APP_ROOT_DIR, '.env.example'),
 });
-if (result.error) {
-  console.log(result.error.name);
-  console.log(result.error.code);
-  console.log(result.error);
+if (result.error && !dotenvFileIsMissing(result.error)) {
   throw result.error;
 }
 
@@ -32,12 +38,8 @@ app.get('/', (req, res) => {
 const reqHandlerLoader = require('./api');
 reqHandlerLoader.loadHandlers(app);
 
-const server = app.listen(
-    process.env.PORT,
-    process.env.HOST,
-    () => {
-      console.log(
-          `Server up at ${server.address().address}:${server.address().port}`
-      );
-    }
-);
+const server = app.listen(process.env.PORT, process.env.HOST, () => {
+  console.log(
+    `Server up at ${server.address().address}:${server.address().port}`
+  );
+});

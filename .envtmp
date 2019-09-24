@@ -1,8 +1,0 @@
-# The host the server is listening on
-HOST=localhost
-
-# The port number the server is listening on
-PORT=8001
-
-# The secret used to sign JWTs
-JWT_SECRET=gCRm%td-33P!QF7.
