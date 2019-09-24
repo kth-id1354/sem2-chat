@@ -34,7 +34,7 @@ const server = app.listen(
     process.env.SERVER_HOST,
     () => {
       console.log(
-          `Server is up at ${server.address().address}:${server.address().port}`
+          `Server up at ${server.address().address}:${server.address().port}`
       );
     }
 );
