@@ -9,6 +9,7 @@ const result = require('dotenv-safe').config({
 });
 if (result.error) {
   console.log(result.error.name);
+  console.log(result.error.code);
   console.log(result.error);
   throw result.error;
 }
