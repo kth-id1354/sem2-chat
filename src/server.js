@@ -31,7 +31,7 @@ reqHandlerLoader.loadHandlers(app);
 
 const server = app.listen(
     process.env.PORT,
-    // process.env.SERVER_HOST,
+    process.env.SERVER_HOST,
     () => {
       console.log(
           `Server is up at ${server.address().address}:${server.address().port}`
