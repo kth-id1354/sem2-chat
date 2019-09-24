@@ -137,9 +137,9 @@ class MsgApi extends RequestHandler {
   convertAuthorIdToUrl(msg) {
     msg.author =
       RequestHandler.URL_PREFIX +
-      process.env.SERVER_HOST +
+      process.env.HOST +
       ':' +
-      process.env.SERVER_PORT +
+      process.env.PORT +
       UserApi.USER_API_PATH +
       '/' +
       msg.authorId;
