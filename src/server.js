@@ -8,6 +8,8 @@ const result = require('dotenv-safe').config({
   example: path.join(APP_ROOT_DIR, '.env.example'),
 });
 if (result.error) {
+  console.log(result.error.name);
+  console.log(result.error);
   throw result.error;
 }
 
